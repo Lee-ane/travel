@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -14,22 +15,26 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   dynamic images = [];
-
+  String imgURL = '';
   Timer? timer;
   TextEditingController url = TextEditingController();
+
+  Future<void> uploadImg() async {
+    try {
+      imgURL = await APIs().pickAndUploadImage();
+      if (kDebugMode) {
+        print(imgURL);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error picking and uploading image: $e');
+      }
+    }
+  }
 
   Future<void> fetchData() async {
     images = await APIs().fetchPosts();
     setState(() {});
-  }
-
-  Future<void> addPost(String url) async {
-    String message = '';
-    message = await APIs().addPosts(url);
-    setState(() {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
-    });
   }
 
   @override
@@ -103,23 +108,8 @@ class _DashboardState extends State<Dashboard> {
                   context: context,
                   type: QuickAlertType.info,
                   title: 'Share your image',
-                  widget: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: TextField(
-                      controller: url,
-                      style: const TextStyle(color: Colors.blue),
-                      decoration: InputDecoration(
-                          fillColor: Colors.amber.shade100,
-                          filled: true,
-                          hintText: 'Image Url',
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none),
-                    ),
-                  ),
                   confirmBtnText: 'Accept',
-                  onConfirmBtnTap: () {
-                    addPost(url.text);
-                  },
+                  onConfirmBtnTap: () {uploadImg();},
                   showCancelBtn: true,
                   cancelBtnText: 'Cancel',
                   onCancelBtnTap: () {
