@@ -8,3 +8,18 @@ TextStyle logo = GoogleFonts.lobster(
     fontWeight: FontWeight.bold,
   ),
 );
+
+TextStyle browse = GoogleFonts.aBeeZee(
+  textStyle: TextStyle(
+    fontSize: 18,
+    color: Colors.grey.shade500,
+    fontWeight: FontWeight.bold,
+  ),
+);
+
+TextStyle dialogTitle = GoogleFonts.aBeeZee(
+  textStyle: const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+);

@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-String ip = '192.168.1.178';
+String ip = 'AN';
 String urlHead = 'http://$ip:8080/api';
 
 class APIs {

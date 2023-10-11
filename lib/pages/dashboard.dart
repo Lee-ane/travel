@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:quickalert/quickalert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:travel/style/data.dart';
+import 'package:travel/style/styles.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -39,6 +39,7 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> addPost() async {
     mssg = await APIs().addPosts(imgURL);
+    imgURL = '';
     setState(() {});
   }
 
@@ -109,46 +110,105 @@ class _DashboardState extends State<Dashboard> {
             height: sH * 0.88,
             child: GestureDetector(
               onTap: () {
-                QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.info,
-                  title: 'Share your image',
-                  widget: Column(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              uploadImg();
-                            });
-                          },
-                          icon: const Icon(Icons.add_photo_alternate)),
-                      imgURL.isNotEmpty
-                          ? SizedBox(
-                              width: sW,
-                              height: sH * 0.5,
-                              child: Image.network(imgURL))
-                          : const SizedBox()
-                    ],
-                  ),
-                  confirmBtnText: 'Accept',
-                  onConfirmBtnTap: () {
-                    if (imgURL.isNotEmpty) {
-                      addPost();
-                    } else {
-                      mssg = 'Cant upload image, please try again later';
-                    }
-                    ScaffoldMessenger(child: SnackBar(content: Text(mssg)));
-                    setState(() {
-                      Navigator.pop(context);
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: SizedBox(
+                          width: sW,
+                          height: sH * 0.5,
+                          child: StatefulBuilder(
+                            builder:
+                                (BuildContext context, StateSetter saveState) {
+                              return Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text('Import your picture',
+                                      style: dialogTitle),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await uploadImg();
+                                      saveState(() {});
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      width: sW * 0.7,
+                                      height: sH * 0.3,
+                                      child: imgURL.isEmpty ? Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.add_photo_alternate,
+                                              color: Colors.grey.shade500,
+                                              size: sW * 0.1),
+                                          Text('Browse for images',
+                                              style: browse),
+                                        ],
+                                      ) : Image.network(imgURL),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      TextButton(
+                                          onPressed: () {
+                                            imgURL = '';
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Cancel')),
+                                      TextButton(
+                                          onPressed: () {
+                                            addPost();
+                                            Navigator.pop(context);
+                                            setState(() {});
+                                          },
+                                          child: const Text('Post'))
+                                    ],
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      );
                     });
-                  },
-                  showCancelBtn: true,
-                  cancelBtnText: 'Cancel',
-                  onCancelBtnTap: () {
-                    imgURL = '';
-                    Navigator.pop(context);
-                  },
-                );
+                // QuickAlert.show(
+                //   context: context,
+                //   type: QuickAlertType.info,
+                //   title: 'Share your image',
+                //   widget: IconButton(
+                //       onPressed: () {
+                //         setState(() {
+                //           uploadImg();
+                //         });
+                //       },
+                //       icon: const Icon(Icons.add_photo_alternate)),
+                //   confirmBtnText: 'Accept',
+                //   onConfirmBtnTap: () {
+                //     if (imgURL.isNotEmpty) {
+                //       addPost();
+                //     } else {
+                //       mssg = 'Cant upload image, please try again later';
+                //     }
+                //     setState(() {
+                //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mssg)));
+                //       Navigator.pop(context);
+                //     });
+                //   },
+                //   showCancelBtn: true,
+                //   cancelBtnText: 'Cancel',
+                //   onCancelBtnTap: () {
+                //     imgURL = '';
+                //     Navigator.pop(context);
+                //   },
+                // );
               },
               child: Container(
                 padding: const EdgeInsets.all(10),
