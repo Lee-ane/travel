@@ -16,8 +16,8 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   dynamic images = [];
   String imgURL = '';
+  String mssg = '';
   Timer? timer;
-  TextEditingController url = TextEditingController();
 
   Future<void> uploadImg() async {
     try {
@@ -34,6 +34,11 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> fetchData() async {
     images = await APIs().fetchPosts();
+    setState(() {});
+  }
+
+  Future<void> addPost() async {
+    mssg = await APIs().addPosts(imgURL);
     setState(() {});
   }
 
@@ -108,11 +113,39 @@ class _DashboardState extends State<Dashboard> {
                   context: context,
                   type: QuickAlertType.info,
                   title: 'Share your image',
+                  widget: Column(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              uploadImg();
+                            });
+                          },
+                          icon: const Icon(Icons.add_photo_alternate)),
+                      imgURL.isNotEmpty
+                          ? SizedBox(
+                              width: sW,
+                              height: sH * 0.5,
+                              child: Image.network(imgURL))
+                          : const SizedBox()
+                    ],
+                  ),
                   confirmBtnText: 'Accept',
-                  onConfirmBtnTap: () {uploadImg();},
+                  onConfirmBtnTap: () {
+                    if (imgURL.isNotEmpty) {
+                      addPost();
+                    } else {
+                      mssg = 'Cant upload image, please try again later';
+                    }
+                    ScaffoldMessenger(child: SnackBar(content: Text(mssg)));
+                    setState(() {
+                      Navigator.pop(context);
+                    });
+                  },
                   showCancelBtn: true,
                   cancelBtnText: 'Cancel',
                   onCancelBtnTap: () {
+                    imgURL = '';
                     Navigator.pop(context);
                   },
                 );

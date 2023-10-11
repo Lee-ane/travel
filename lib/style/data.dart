@@ -4,7 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-String urlHead = 'http://192.168.1.40:8080/api';
+String ip = '192.168.1.178';
+String urlHead = 'http://$ip:8080/api';
 
 class APIs {
   Future<dynamic> fetchPosts() async {
@@ -31,8 +32,8 @@ class APIs {
   Future<String> addPosts(String imgURL) async {
     String url = '$urlHead/addPost';
     try {
-      final response = await http.post(Uri.parse(url),
-          body: {'imageURL': imgURL});
+      final response =
+          await http.post(Uri.parse(url), body: {'imageURL': imgURL});
       if (response.statusCode == 200) {
         var decodedResponse = jsonDecode(response.body);
         String data = decodedResponse['message'];
@@ -64,7 +65,7 @@ class APIs {
 
       if (response.statusCode == 200) {
         var decodedResponse = jsonDecode(responseBody);
-        String result = await addPosts(decodedResponse['secure_url']);
+        String result = decodedResponse['secure_url'];
         if (kDebugMode) {
           print(decodedResponse);
         }
@@ -83,7 +84,7 @@ class APIs {
   Future<String> pickAndUploadImage() async {
     try {
       FilePickerResult? result =
-      await FilePicker.platform.pickFiles(type: FileType.image);
+          await FilePicker.platform.pickFiles(type: FileType.image);
       if (result != null) {
         String filePath = result.files.single.path!;
         String message = await getURL(filePath);
@@ -98,6 +99,6 @@ class APIs {
         print('Error picking and uploading image: $e');
       }
     }
-    throw Exception ('Error');
+    throw Exception('Error');
   }
 }
