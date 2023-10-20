@@ -16,6 +16,9 @@ class APIs {
       if (response.statusCode == 200) {
         var decodedResponse = jsonDecode(response.body);
         var data = decodedResponse['data'];
+        if (kDebugMode) {
+          print('Ok');
+        }
         return data;
       } else {
         if (kDebugMode) {

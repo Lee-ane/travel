@@ -139,17 +139,37 @@ class _DashboardState extends State<Dashboard> {
                                               BorderRadius.circular(10)),
                                       width: sW * 0.7,
                                       height: sH * 0.3,
-                                      child: imgURL.isEmpty ? Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.add_photo_alternate,
-                                              color: Colors.grey.shade500,
-                                              size: sW * 0.1),
-                                          Text('Browse for images',
-                                              style: browse),
-                                        ],
-                                      ) : Image.network(imgURL),
+                                      child: Center(
+                                        child: imgURL.isEmpty
+                                            ? Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.add_photo_alternate,
+                                                      color: Colors.grey.shade500,
+                                                      size: sW * 0.1),
+                                                  Text('Browse for images',
+                                                      style: browse),
+                                                ],
+                                              )
+                                            : Stack(
+                                                children: [
+                                                  Image.network(imgURL),
+                                                  Positioned(right:0,top:0,
+                                                    child: Container(decoration: BoxDecoration(shape: BoxShape.circle,color: Colors.grey.shade100),
+                                                      child: IconButton(
+                                                        onPressed: () {
+                                                          saveState(() {
+                                                            imgURL = '';
+                                                          });
+                                                        },
+                                                        icon: const Icon(Icons.close,color: Colors.red),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                      ),
                                     ),
                                   ),
                                   Row(
